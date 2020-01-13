@@ -12,7 +12,7 @@ resources:
 
 variables:
   dockerRegistryServiceConnection: 'acragentsimages'
-  imageRepository: 'crossdvlup-agents'
+  imageRepository: 'netcoreconfbcn2020-agents'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   
 stages:
