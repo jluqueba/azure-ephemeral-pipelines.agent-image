@@ -11,7 +11,7 @@ resources:
 - repo: self
 
 variables:
-  dockerRegistryServiceConnection: 'acragentsimages'
+  dockerRegistryServiceConnection: 'acrdevopsagents'
   imageRepository: 'netcoreconfbcn2020-agents'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   
