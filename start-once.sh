@@ -80,12 +80,14 @@ print_header "1. Determining matching Azure Pipelines agent..."
 #   exit 1
 # fi
 
-AZP_AGENTPACKAGE_URL="https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz"
-print_header "2. Downloading $AZP_AGENTPACKAGE_URL and installing Azure Pipelines agent..."
+#print_header "2. Downloading $AZP_AGENTPACKAGE_URL and installing Azure Pipelines agent..."
 
 #curl -LsS $AZP_AGENTPACKAGE_URL | tar -xz & wait $!
 
-tar -xz ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz & wait $!
+$AZP_AGENTPACKAGE="./binaries/vsts-agent-linux-x64-2.163.1.tar.gz"
+print_header "2. Extracting $AZP_AGENTPACKAGE and installing Azure Pipelines agent..."
+
+tar -xz "./binaries/vsts-agent-linux-x64-2.163.1.tar.gz" & wait $!
 
 source ./env.sh
 
