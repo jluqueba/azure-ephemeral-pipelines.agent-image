@@ -75,10 +75,13 @@ AZP_AGENT_REPONSE=$(cat <<EOF
 EOF
 )
 
-if echo "$AZP_AGENT_RESPONSE" | jq . >/dev/null 2>&1; then
-  AZP_AGENTPACKAGE_URL=$(echo "$AZP_AGENT_RESPONSE" \
-    | jq -r '.value | map([.version.major,.version.minor,.version.patch,.downloadUrl]) | sort | .[length-1] | .[3]')
-fi
+# if echo "$AZP_AGENT_RESPONSE" | jq . >/dev/null 2>&1; then
+#   AZP_AGENTPACKAGE_URL=$(echo "$AZP_AGENT_RESPONSE" \
+#     | jq -r '.value | map([.version.major,.version.minor,.version.patch,.downloadUrl]) | sort | .[length-1] | .[3]')
+# fi
+
+# TOFIX: https://github.com/microsoft/azure-pipelines-ephemeral-agents/issues/2
+AZP_AGENTPACKAGE_URL = "https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz"
 
 if [ -z "$AZP_AGENTPACKAGE_URL" -o "$AZP_AGENTPACKAGE_URL" == "null" ]; then
   echo 1>&2 "error: could not determine a matching Azure Pipelines agent - check that account '$AZP_URL' is correct and the token is valid for that account"
