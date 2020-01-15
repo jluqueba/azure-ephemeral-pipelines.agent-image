@@ -81,7 +81,7 @@ EOF
 # fi
 
 # TOFIX: https://github.com/microsoft/azure-pipelines-ephemeral-agents/issues/2
-AZP_AGENTPACKAGE_URL = "https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz"
+AZP_AGENTPACKAGE_URL="https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz"
 
 if [ -z "$AZP_AGENTPACKAGE_URL" -o "$AZP_AGENTPACKAGE_URL" == "null" ]; then
   echo 1>&2 "error: could not determine a matching Azure Pipelines agent - check that account '$AZP_URL' is correct and the token is valid for that account"
