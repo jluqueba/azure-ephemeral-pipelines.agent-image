@@ -90,6 +90,9 @@ print_header "1. Determining matching Azure Pipelines agent..."
 
 # tar -zxvf vsts-agent-linux-x64-2.163.1.tar.gz & wait $!
 
+echo "info: checking dir content"
+echo "$(ls)"
+
 source ./env.sh
 
 trap 'cleanup; exit 130' INT
