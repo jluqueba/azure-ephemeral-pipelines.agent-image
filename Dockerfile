@@ -48,4 +48,7 @@ COPY ./start-once.sh .
 RUN chmod +x start.sh
 RUN chmod +x start-once.sh
 
+RUN mkdir ./binaries
+COPY ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz ./binaries/
+
 CMD ["./start-once.sh"]

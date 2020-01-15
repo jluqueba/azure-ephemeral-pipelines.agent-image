@@ -64,33 +64,28 @@ export VSO_AGENT_IGNORE=VSO_AGENT_IGNORE,AZP_TOKEN,AZP_TOKEN_FILE,AZ_IS_MANAGED,
 
 print_header "1. Determining matching Azure Pipelines agent..."
 
+# TOFIX: https://github.com/microsoft/azure-pipelines-ephemeral-agents/issues/2
 # AZP_AGENT_RESPONSE=$(curl -LsS \
 #   -u user:$(cat "$AZP_TOKEN_FILE") \
 #   -H 'Accept:application/json;api-version=3.0-preview' \
 #   "$AZP_URL/_apis/distributedtask/packages/agent?platform=linux-x64")
-
-# TOFIX: https://github.com/microsoft/azure-pipelines-ephemeral-agents/issues/2
-AZP_AGENT_REPONSE=$(cat <<EOF
-{"count":10,"value":[{"type":"agent","platform":"linux-x64","createdOn":"2019-12-18T14:20:10.057Z","version":{"major":2,"minor":163,"patch":1},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.163.1.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-11-18T18:52:07.303Z","version":{"major":2,"minor":160,"patch":1},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.160.1.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-11-06T15:51:55.837Z","version":{"major":2,"minor":160,"patch":0},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.160.0/vsts-agent-linux-x64-2.160.0.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.160.0.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-10-28T15:34:23.52Z","version":{"major":2,"minor":159,"patch":2},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.159.2/vsts-agent-linux-x64-2.159.2.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.159.2.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-10-09T13:41:17.293Z","version":{"major":2,"minor":158,"patch":0},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.158.0/vsts-agent-linux-x64-2.158.0.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.158.0.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-08-05T15:55:05.57Z","version":{"major":2,"minor":155,"patch":1},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.155.1/vsts-agent-linux-x64-2.155.1.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.155.1.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-07-18T19:26:02.55Z","version":{"major":2,"minor":154,"patch":3},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.154.3/vsts-agent-linux-x64-2.154.3.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.154.3.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-06-18T19:56:33.2Z","version":{"major":2,"minor":153,"patch":2},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.153.2/vsts-agent-linux-x64-2.153.2.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.153.2.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-06-24T17:43:22.79Z","version":{"major":2,"minor":153,"patch":1},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.153.1/vsts-agent-linux-x64-2.153.1.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.153.1.tar.gz"},{"type":"agent","platform":"linux-x64","createdOn":"2019-06-11T14:38:09.607Z","version":{"major":2,"minor":152,"patch":1},"downloadUrl":"https://vstsagentpackage.azureedge.net/agent/2.152.1/vsts-agent-linux-x64-2.152.1.tar.gz","infoUrl":"https://go.microsoft.com/fwlink/?LinkId=798199","filename":"vsts-agent-linux-x64-2.152.1.tar.gz"}]}
-EOF
-)
 
 # if echo "$AZP_AGENT_RESPONSE" | jq . >/dev/null 2>&1; then
 #   AZP_AGENTPACKAGE_URL=$(echo "$AZP_AGENT_RESPONSE" \
 #     | jq -r '.value | map([.version.major,.version.minor,.version.patch,.downloadUrl]) | sort | .[length-1] | .[3]')
 # fi
 
-# TOFIX: https://github.com/microsoft/azure-pipelines-ephemeral-agents/issues/2
+# if [ -z "$AZP_AGENTPACKAGE_URL" -o "$AZP_AGENTPACKAGE_URL" == "null" ]; then
+#   echo 1>&2 "error: could not determine a matching Azure Pipelines agent - check that account '$AZP_URL' is correct and the token is valid for that account"
+#   exit 1
+# fi
+
 AZP_AGENTPACKAGE_URL="https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz"
-
-if [ -z "$AZP_AGENTPACKAGE_URL" -o "$AZP_AGENTPACKAGE_URL" == "null" ]; then
-  echo 1>&2 "error: could not determine a matching Azure Pipelines agent - check that account '$AZP_URL' is correct and the token is valid for that account"
-  exit 1
-fi
-
 print_header "2. Downloading $AZP_AGENTPACKAGE_URL and installing Azure Pipelines agent..."
 
-curl -LsS $AZP_AGENTPACKAGE_URL | tar -xz & wait $!
+#curl -LsS $AZP_AGENTPACKAGE_URL | tar -xz & wait $!
+
+tar -xz ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz & wait $!
 
 source ./env.sh
 
