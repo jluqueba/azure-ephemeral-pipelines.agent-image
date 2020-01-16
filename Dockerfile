@@ -50,4 +50,7 @@ RUN chmod +x start-once.sh
 
 ADD ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz .
 
+RUN echo "Checking content..."
+RUN ls
+
 CMD ["./start-once.sh"]
