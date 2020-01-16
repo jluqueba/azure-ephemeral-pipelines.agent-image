@@ -69,16 +69,6 @@ print_header "1. Determining matching Azure Pipelines agent..."
 
 #curl -LsS $AZP_AGENTPACKAGE_URL | tar -xz & wait $!
 
-# TODEL: Docker already does TAR command on ADD
-# AZP_AGENTPACKAGE="vsts-agent-linux-x64-2.163.1.tar.gz"
-# print_header "2. Extracting $AZP_AGENTPACKAGE and installing Azure Pipelines agent..."
-
-# tar -zxvf vsts-agent-linux-x64-2.163.1.tar.gz & wait $!
-
-echo "info: checking dir content"
-ls
-echo "ls command finish"
-
 source ./env.sh
 
 trap 'cleanup; exit 130' INT

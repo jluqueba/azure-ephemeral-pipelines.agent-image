@@ -41,16 +41,17 @@ RUN curl -sfLo terraform_linux_amd64.zip ${TERRAFORM_URL} \
 
 WORKDIR /azp
 
+# Extract and configure agent libraries
+ADD ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz .
+RUN chmod +x config.sh
+RUN chmod +x env.sh
+RUN chmod +x run.sh
+
 RUN mkdir ./patches
 COPY ./patches/AgentService.js ./patches/
 COPY ./start.sh .
 COPY ./start-once.sh .
 RUN chmod +x start.sh
 RUN chmod +x start-once.sh
-
-ADD ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz .
-
-RUN echo "Checking content..."
-RUN ls
 
 CMD ["./start-once.sh"]
