@@ -84,10 +84,6 @@ print_header "1. Determining matching Azure Pipelines agent..."
 
 #curl -LsS $AZP_AGENTPACKAGE_URL | tar -xz & wait $!
 
-echo -e "directory cotent..."
-echo -e $(ls)
-echo -e "directory end"
-
 source ./env.sh
 
 trap 'cleanup; exit 130' INT
