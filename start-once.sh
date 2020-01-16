@@ -84,57 +84,55 @@ print_header "1. Determining matching Azure Pipelines agent..."
 
 #curl -LsS $AZP_AGENTPACKAGE_URL | tar -xz & wait $!
 
-ls
+source ./env.sh
 
-# source ./env.sh
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM
 
-# trap 'cleanup; exit 130' INT
-# trap 'cleanup; exit 143' TERM
+print_header "3. Configuring Azure Pipelines agent..."
 
-# print_header "3. Configuring Azure Pipelines agent..."
+./config.sh --unattended \
+  --agent "${AZP_AGENT_NAME:-$(hostname)}" \
+  --url "$AZP_URL" \
+  --auth PAT \
+  --token $(cat "$AZP_TOKEN_FILE") \
+  --pool "${AZP_POOL:-Default}" \
+  --work "${AZP_WORK:-_work}" \
+  --replace \
+--acceptTeeEula & wait $!
 
-# ./config.sh --unattended \
-#   --agent "${AZP_AGENT_NAME:-$(hostname)}" \
-#   --url "$AZP_URL" \
-#   --auth PAT \
-#   --token $(cat "$AZP_TOKEN_FILE") \
-#   --pool "${AZP_POOL:-Default}" \
-#   --work "${AZP_WORK:-_work}" \
-#   --replace \
-# --acceptTeeEula & wait $!
+print_header "6. Patching listener..."
 
-# print_header "6. Patching listener..."
+cp ../patches/AgentService.js ./bin/
 
-# cp ../patches/AgentService.js ./bin/
+print_header "5. Running Azure Pipelines agent..."
 
-# print_header "5. Running Azure Pipelines agent..."
+# `exec` the node runtime so it's aware of TERM and INT signals
+# AgentService.js understands how to handle agent self-update and restart
+./externals/node/bin/node ./bin/AgentService.js interactive --once
 
-# # `exec` the node runtime so it's aware of TERM and INT signals
-# # AgentService.js understands how to handle agent self-update and restart
-# ./externals/node/bin/node ./bin/AgentService.js interactive --once
+print_header "6. Removing Azure Pipelines agent..."
 
-# print_header "6. Removing Azure Pipelines agent..."
+cleanup
 
-# cleanup
+print_header "7. Agent has been cleaned up..."
 
-# print_header "7. Agent has been cleaned up..."
+# Set default cloud
+AZ_CLOUD=${AZ_CLOUD:-AzureClou2}
 
-# # Set default cloud
-# AZ_CLOUD=${AZ_CLOUD:-AzureClou2}
-
-# # Kill ourselves if running in ACI. 
-# if [ -n "$AZ_ACI_NAME" ]; then
-#   print_header "8. Destroying container $AZ_ACI_NAME on $AZ_ACI_RG resource group"
-#   print_header "8.1 Logging in with $AZ_SERVICE_PRINCIPAL on $AZ_CLOUD"
-#   az cloud set -n $AZ_CLOUD
-#   az login --service-principal \
-#     -u $AZ_SERVICE_PRINCIPAL \
-#     -p $AZ_SERVICE_PRINCIPAL_KEY \
-#     --tenant $AZ_TENANT_ID > /dev/null
-#   print_header "8.2 Setting Subscription $AZ_SUBSCRIPTION_ID"
-#   az account set --subscription $AZ_SUBSCRIPTION_ID > /dev/null
-#   print_header "8.3 Deleting "
-#   az container delete --yes \
-#     --resource-group $AZ_ACI_RG \
-#     --name $AZ_ACI_NAME
-# fi
+# Kill ourselves if running in ACI. 
+if [ -n "$AZ_ACI_NAME" ]; then
+  print_header "8. Destroying container $AZ_ACI_NAME on $AZ_ACI_RG resource group"
+  print_header "8.1 Logging in with $AZ_SERVICE_PRINCIPAL on $AZ_CLOUD"
+  az cloud set -n $AZ_CLOUD
+  az login --service-principal \
+    -u $AZ_SERVICE_PRINCIPAL \
+    -p $AZ_SERVICE_PRINCIPAL_KEY \
+    --tenant $AZ_TENANT_ID > /dev/null
+  print_header "8.2 Setting Subscription $AZ_SUBSCRIPTION_ID"
+  az account set --subscription $AZ_SUBSCRIPTION_ID > /dev/null
+  print_header "8.3 Deleting "
+  az container delete --yes \
+    --resource-group $AZ_ACI_RG \
+    --name $AZ_ACI_NAME
+fi
