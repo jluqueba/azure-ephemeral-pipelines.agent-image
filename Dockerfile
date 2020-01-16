@@ -50,4 +50,4 @@ RUN chmod +x start-once.sh
 
 ADD ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz .
 
-CMD ["./start.sh"]
+CMD ["./start-once.sh"]
