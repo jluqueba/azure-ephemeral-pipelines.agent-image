@@ -41,11 +41,6 @@ RUN curl -sfLo terraform_linux_amd64.zip ${TERRAFORM_URL} \
 
 WORKDIR /azp
 
-# Extract and configure agent libraries
-#ADD ./binaries/vsts-agent-linux-x64-2.163.1.tar.gz .
-ARG AZP_AGENTPACKAGE_URL="https://vstsagentpackage.azureedge.net/agent/2.163.1/vsts-agent-linux-x64-2.163.1.tar.gz"
-RUN curl -LsS ${AZP_AGENTPACKAGE_URL} | tar -xz & wait $!
-
 RUN mkdir ./patches
 COPY ./patches/AgentService.js ./patches/
 COPY ./start.sh .
